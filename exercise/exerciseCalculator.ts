@@ -1,8 +1,3 @@
-interface ExerciseInputs {
-  numArr: Array<number>,
-  tar: number
-}
-
 interface Result {
   periodLength: number,
   trainingDays: number,
@@ -13,6 +8,11 @@ interface Result {
   average: number
 }
 
+/*
+interface ExerciseInputs {
+  numArr: Array<number>,
+  tar: number
+}
 const parseArguments = (args: Array<string>): ExerciseInputs => {
   const entry = args.slice(2);
   const tar = Number(entry[0]);
@@ -26,9 +26,9 @@ const parseArguments = (args: Array<string>): ExerciseInputs => {
   } else {
     throw new Error('Provided values were not numbers!');
   }
-};
+};*/
 
-const calculateExercises = (args: Array<number>, targetHour: number): Result => {
+export const calculateExercises = (args: Array<number>, targetHour: number): Result => {
   const periodLength = args.length;
   const target = targetHour;
   const trainingDays = args.filter(h => h > 0).length;
@@ -57,14 +57,3 @@ const calculateExercises = (args: Array<number>, targetHour: number): Result => 
 
   return {periodLength, trainingDays, success, rating, ratingDescription, target, average};
 };
-
-try {
-  const { numArr, tar } = parseArguments(process.argv);
-  console.log(calculateExercises(numArr, tar));
-} catch (error: unknown) {
-  let errorMessage = 'Something went wrong.';
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
-  }
-  console.log(errorMessage);
-}
