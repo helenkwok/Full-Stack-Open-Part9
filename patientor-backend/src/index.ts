@@ -10,8 +10,10 @@ const allowedOrigins = ['http://localhost:3000'];
 const options: cors.CorsOptions = {
   origin: allowedOrigins
 };
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-app.use(cors(options));
+
+app.use((_req, _res, next) => {
+  next();
+}, cors(options));
 
 const PORT = 3001;
 
