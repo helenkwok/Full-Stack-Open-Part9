@@ -1,3 +1,8 @@
+interface ExerciseInputs {
+  numArr: Array<number>,
+  tar: number
+}
+
 interface Result {
   periodLength: number,
   trainingDays: number,
@@ -8,6 +13,21 @@ interface Result {
   average: number
 }
 
+const parseArguments = (args: Array<string>): ExerciseInputs => {
+  const entry = args.slice(2)
+  const tar = Number(entry[0])
+  const inputArr =  entry.slice(1)
+
+  if (inputArr.length < 1) throw new Error('Not enough arguments')
+  const numArr = inputArr.map(arg => Number(arg))
+
+  if (numArr.filter((arg: number) => isNaN(arg)).length === 0 && !isNaN(tar)) {
+    return {numArr, tar}
+  } else {
+    throw new Error('Provided values were not numbers!');
+  }
+}
+
 const calculateExercises = (args: Array<number>, targetHour: number): Result => {
   const periodLength = args.length
   const target = targetHour
@@ -16,30 +36,31 @@ const calculateExercises = (args: Array<number>, targetHour: number): Result => 
   const average = args.reduce((sum, h) => sum += h) / periodLength
   const success = average  >= target
 
-  const metric = (average - target) / target
   let rating
   let ratingDescription
   switch (true) {
-    case (metric < -0.5):
-      rating = 1
-      ratingDescription = 'try harder'
+    case (target - average <= 0):
+      rating = 3
+      ratingDescription = 'well done'
       break
-    case (metric < 0):
+    case (target - average <= 1):
       rating = 2
       ratingDescription = 'not too bad but could be better'
       break
-    case (metric >= 0):
-      rating = 3
-      ratingDescription = 'well done'
+    case (target - average > 1):
+      rating = 1
+      ratingDescription = 'try harder'
       break
     default:
       throw new Error('Provided values were not numbers')
   }
+
   return {periodLength, trainingDays, success, rating, ratingDescription, target, average}
 }
 
 try {
-  console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+  const { numArr, tar } = parseArguments(process.argv)
+  console.log(calculateExercises(numArr, tar))
 } catch (error: unknown) {
   let errorMessage = 'Something went wrong.'
   if (error instanceof Error) {
