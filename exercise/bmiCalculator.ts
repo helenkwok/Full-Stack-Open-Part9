@@ -1,4 +1,4 @@
-const calculateBmi = (height: number, weight: number) => {
+const calculateBmi = (height: number, weight: number): string => {
   const bmi = weight/(height/100)**2
   switch (true) {
     case (bmi < 16):
@@ -15,10 +15,20 @@ const calculateBmi = (height: number, weight: number) => {
       return 'Obese (Class I)'
     case (bmi < 40):
       return 'Obese (Class II)'
-    default:
+      case (bmi > 40):
       return 'Obese (Class III)'
+    default:
+      throw new Error('Provided values were not numbers')
   }
 
 }
 
-console.log(calculateBmi(180, 74))
+try {
+  console.log(calculateBmi(180, 74))
+} catch (error: unknown) {
+  let errorMessage = 'Something went wrong.'
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage)
+}

@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "calculateBmi": "ts-node -- bmiCalculator.ts"
+    "ts-node": "ts-node",
+    "calculateBmi": "ts-node -- bmiCalculator.ts",
+    "calculateExercises": "ts-node -- exerciseCalculator.ts"
   },
   "devDependencies": {
     "ts-node": "^10.9.1",
