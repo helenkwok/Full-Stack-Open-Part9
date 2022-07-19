@@ -7,7 +7,7 @@
     "start": "node build/index.js",
     "dev": "ts-node-dev index.ts",
     "lint": "eslint --ext .ts .",
-    "fix": "npm run lint -- --fix"
+    "fix": "eslint --ext .ts . --fix"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
