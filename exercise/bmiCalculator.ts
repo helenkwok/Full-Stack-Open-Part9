@@ -1,4 +1,4 @@
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
   const bmi = weight/(height/100)**2
   switch (true) {
     case (bmi < 16):
@@ -18,20 +18,6 @@ const calculateBmi = (height: number, weight: number): string => {
       case (bmi > 40):
       return 'Obese (Class III)'
     default:
-      throw new Error('Provided values were not numbers')
+      throw new Error('malformatted parameters')
   }
-
-}
-
-const h: number = Number(process.argv[2])
-const w: number = Number(process.argv[3])
-
-try {
-  console.log(calculateBmi(h, w))
-} catch (error: unknown) {
-  let errorMessage = 'Something went wrong.'
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
-  }
-  console.log(errorMessage)
 }
