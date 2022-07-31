@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Patient } from "../src/types";
 import toNewPatientEntry from "../src/utils";
 import patientsData from  "../data/patients.json";
