@@ -1,31 +1,16 @@
 import React from 'react';
 import { useParams } from "react-router-dom";
 import axios from 'axios';
-import { Box, List, ListItem, ListItemIcon, ListItemText, Typography } from '@material-ui/core';
+import { Box, Button, Paper, Table, TableBody, TableContainer, Typography } from '@material-ui/core';
 import { MdMale, MdFemale, MdTransgender } from 'react-icons/md';
-import { BsDot } from "react-icons/bs";
 
 import { apiBaseUrl } from "../constants";
-import { Diagnosis, Gender, Patient } from '../types';
+import { Gender, Patient } from '../types';
+import EntryDetails from './EntryDetails';
 
 const PatientPage = () => {
-  const [diagnoses, setDiagnoses] = React.useState<Array<Diagnosis> | null>(null);
   const [patient, setPatient] = React.useState<Patient | null>(null);
   const { id } = useParams<{ id: string }>();
-
-  React.useEffect(() => {
-    const fetchDiagnoses = async () => {
-      try {
-          const { data: diagnoses } = await axios.get<Array<Diagnosis>>(
-          `${apiBaseUrl}/diagnoses`);
-          setDiagnoses(diagnoses);
-          //console.log(diagnoses);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    void fetchDiagnoses();
-  }, []);
 
   React.useEffect(() => {
     const fetchPatientList = async () => {
@@ -70,29 +55,25 @@ const PatientPage = () => {
           <Typography style={{ marginTop: "0.5em", marginBottom: "0.5em", fontWeight: 600 }} variant="h6">
             entries
           </Typography>
-          {patient.entries.map(entry =>
-            <Box key={entry.id}>
-              <Typography variant="body1">
-                {entry.date} {entry.description}
-              </Typography>
-              <List>
-                {entry.diagnosisCodes && entry.diagnosisCodes.map(diagnosisCode =>
-                  <ListItem key={diagnosisCode}>
-                    <ListItemIcon>
-                      <BsDot />
-                    </ListItemIcon>
-                    <ListItemText>
-                      {diagnosisCode} {diagnoses?.find(diagnosis => diagnosis.code === diagnosisCode)?.name}
-                    </ListItemText>
-                  </ListItem>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableBody>
+                {patient.entries.map(entry =>
+                  <EntryDetails key={entry.id} entry={entry} />
                 )}
-              </List>
-            </Box>
-          )}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Box>
       }
+      <Box sx={{ pt: 2 }}>
+        <Button variant="contained" onClick={() => console.log('add entry')}>
+          ADD NEW ENTRY
+        </Button>
+      </Box>
     </>
   );
 };
 
 export default PatientPage;
+
