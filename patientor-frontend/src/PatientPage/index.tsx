@@ -1,16 +1,31 @@
 import React from 'react';
 import { useParams } from "react-router-dom";
 import axios from 'axios';
-import { Box, Container, List, ListItem, ListItemIcon, ListItemText, Typography } from '@material-ui/core';
+import { Box, List, ListItem, ListItemIcon, ListItemText, Typography } from '@material-ui/core';
 import { MdMale, MdFemale, MdTransgender } from 'react-icons/md';
 import { BsDot } from "react-icons/bs";
 
 import { apiBaseUrl } from "../constants";
-import { Gender, Patient } from '../types';
+import { Diagnosis, Gender, Patient } from '../types';
 
 const PatientPage = () => {
+  const [diagnoses, setDiagnoses] = React.useState<Array<Diagnosis> | null>(null);
   const [patient, setPatient] = React.useState<Patient | null>(null);
   const { id } = useParams<{ id: string }>();
+
+  React.useEffect(() => {
+    const fetchDiagnoses = async () => {
+      try {
+          const { data: diagnoses } = await axios.get<Array<Diagnosis>>(
+          `${apiBaseUrl}/diagnoses`);
+          setDiagnoses(diagnoses);
+          //console.log(diagnoses);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    void fetchDiagnoses();
+  }, []);
 
   React.useEffect(() => {
     const fetchPatientList = async () => {
@@ -19,7 +34,7 @@ const PatientPage = () => {
           const { data: patient } = await axios.get<Patient>(
           `${apiBaseUrl}/patients/${id}`);
           setPatient(patient);
-          console.log(patient.entries);
+          //console.log(patient.entries);
         }
       } catch (e) {
         console.error(e);
@@ -40,9 +55,9 @@ const PatientPage = () => {
   };
 
   return (
-    <div>
+    <>
       {patient &&
-        <Container>
+        <Box>
           <Typography style={{ marginTop: "0.5em", marginBottom: "0.5em", fontWeight: 600 }} variant="h5">
             {patient.name} {getGenderIcon(patient.gender)}
           </Typography>
@@ -55,26 +70,28 @@ const PatientPage = () => {
           <Typography style={{ marginTop: "0.5em", marginBottom: "0.5em", fontWeight: 600 }} variant="h6">
             entries
           </Typography>
-            {patient.entries.map(entry =>
-              <Box key={entry.id}>
-                <Typography variant="body1">
-                  {entry.date} {entry.description}
-                </Typography>
-                <List>
-                  {entry.diagnosisCodes && entry.diagnosisCodes.map(diagnosisCode =>
-                    <ListItem key={diagnosisCode}>
-                      <ListItemIcon>
-                        <BsDot />
-                      </ListItemIcon>
-                      <ListItemText primary={diagnosisCode} />
-                    </ListItem>
-                  )}
-                </List>
-                </Box>
-            )}
-        </Container>
+          {patient.entries.map(entry =>
+            <Box key={entry.id}>
+              <Typography variant="body1">
+                {entry.date} {entry.description}
+              </Typography>
+              <List>
+                {entry.diagnosisCodes && entry.diagnosisCodes.map(diagnosisCode =>
+                  <ListItem key={diagnosisCode}>
+                    <ListItemIcon>
+                      <BsDot />
+                    </ListItemIcon>
+                    <ListItemText>
+                      {diagnosisCode} {diagnoses?.find(diagnosis => diagnosis.code === diagnosisCode)?.name}
+                    </ListItemText>
+                  </ListItem>
+                )}
+              </List>
+            </Box>
+          )}
+        </Box>
       }
-      </div>
+    </>
   );
 };
 
