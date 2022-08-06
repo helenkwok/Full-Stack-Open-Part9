@@ -29,7 +29,6 @@ const healthCheckRatingOptions: HealthCheckRatingOption[] = [
 
 const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
   const [{ diagnoses }] = useStateValue();
-  const [type, setType] =React.useState<string>("HealthCheck");
   return (
     <Formik
       initialValues={{
@@ -37,13 +36,12 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         date: "",
         specialist: "",
         type: Type.HealthCheck,
-        diagnosisCodes: [],
+        diagnosisCodes: undefined,
         employerName: "",
         healthCheckRating: HealthCheckRating.Healthy
       }}
       onSubmit={onSubmit}
       validate={(values) => {
-        setType(values.type);
         const requiredError = "Field is required";
         const errors: { [field: string]: string } = {};
         if (!values.description) {
@@ -58,7 +56,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         return errors;
       }}
     >
-      {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
+      {({ isValid, dirty, setFieldValue, setFieldTouched, values }) => {
         return (
           <Form className="form ui">
             <Field
@@ -85,7 +83,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               diagnoses={Object.values(diagnoses)}
             />
             <SelectField label="Type" name="type" options={typeOptions} />
-            {type === "OccupationalHealthcare" &&
+            {values.type === "OccupationalHealthcare" &&
             <Field
               label="EmployerName"
               placeholder="EmployerName"
@@ -93,7 +91,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               component={TextField}
             />
             }
-            {type === "HealthCheck" &&
+            {values.type === "HealthCheck" &&
               <SelectField
                 label="Health Check Rating"
                 name="healthCheckRating"
