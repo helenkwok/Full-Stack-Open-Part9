@@ -8,6 +8,11 @@ const isDate = (date: string): boolean => {
   return Boolean(Date.parse(date));
 };
 
+const isArray = (diagnosisCodes: unknown): diagnosisCodes is Array<string> => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return Array.isArray(diagnosisCodes) || Array.isArray(diagnosisCodes) && diagnosisCodes.every(d => (typeof d === "string"));
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isType = (param: any): param is Type => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -35,6 +40,14 @@ const parseDate = (date: unknown): string => {
   return date;
 };
 
+const parseDiagnosisCodes = (diagnosisCodes: unknown): Array<string> | undefined => {
+  if(!diagnosisCodes) return undefined;
+  if (!isArray(diagnosisCodes) ) {
+    throw new Error('Incorrect or missing date: ' + diagnosisCodes);
+}
+  return diagnosisCodes;
+};
+
 const parseType = (type: unknown): Type => {
   if (!type || !isType(type)) {
     throw new Error('Incorrect or missing type: ' + type);
@@ -43,7 +56,7 @@ const parseType = (type: unknown): Type => {
 };
 
 const parseHealthCheckRating = (healthCheckRating: unknown): HealthCheckRating => {
-  if (!healthCheckRating || !isHealthCheckRating(Number(healthCheckRating))) {
+  if (!healthCheckRating && healthCheckRating !== 0 || !isHealthCheckRating(Number(healthCheckRating))) {
     throw new Error('Incorrect or missing health check rating: ' + healthCheckRating);
   }
   return Number(healthCheckRating);
@@ -57,6 +70,10 @@ const assertNever = (object: never): never => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const toNewEntry = (object: any): NewEntry => {
+  const description = parseParam(object.description, 'description');
+  const date = parseDate(object.date);
+  const specialist = parseParam(object.specialist, 'specialist');
+  const diagnosisCodes = parseDiagnosisCodes(object.diagnosisCodes);
   const type = parseType(object.type);
 
   let newEntry: NewEntry;
@@ -64,10 +81,11 @@ const toNewEntry = (object: any): NewEntry => {
   switch (type) {
     case 'Hospital':
       newEntry = {
-        description: parseParam(object.description, 'description'),
-        date: parseDate(object.date),
-        specialist: parseParam(object.specialist, 'specialist'),
-        type: type,
+        description,
+        date,
+        specialist,
+        diagnosisCodes,
+        type,
         discharge: {
           date: parseDate(object.discharge.date),
           criteria: parseParam(object.discharge.criteria, 'criteria')
@@ -76,19 +94,21 @@ const toNewEntry = (object: any): NewEntry => {
       return newEntry;
     case 'OccupationalHealthcare':
       newEntry = {
-        description: parseParam(object.description, 'description'),
-        date: parseDate(object.date),
-        specialist: parseParam(object.specialist, 'specialist'),
-        type: type,
+        description,
+        date,
+        specialist,
+        diagnosisCodes,
+        type,
         employerName: parseParam(object.employerName, 'employerName')
       };
       return newEntry;
     case 'HealthCheck':
       newEntry = {
-        description: parseParam(object.description, 'description'),
-        date: parseDate(object.date),
-        specialist: parseParam(object.specialist, 'specialist'),
-        type: type,
+        description,
+        date,
+        specialist,
+        diagnosisCodes,
+        type,
         healthCheckRating: parseHealthCheckRating(object.healthCheckRating)
       };
       return newEntry;

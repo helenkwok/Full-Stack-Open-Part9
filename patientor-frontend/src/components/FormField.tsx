@@ -24,7 +24,7 @@ export type TypeOption = {
 
 export type HealthCheckRatingOption = {
   value: HealthCheckRating;
-  label: string;
+  label: number;
 };
 
 // props for select field component

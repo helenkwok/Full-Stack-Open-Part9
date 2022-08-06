@@ -20,10 +20,10 @@ const typeOptions: TypeOption[] = [
 ];
 
 const healthCheckRatingOptions: HealthCheckRatingOption[] = [
-  { value: HealthCheckRating.Healthy, label: '0' },
-  { value: HealthCheckRating.LowRisk, label: '1' },
-  { value: HealthCheckRating.HighRisk, label: '2' },
-  { value: HealthCheckRating.CriticalRisk, label: '3' },
+  { value: HealthCheckRating.Healthy, label: 0 },
+  { value: HealthCheckRating.LowRisk, label: 1 },
+  { value: HealthCheckRating.HighRisk, label: 2 },
+  { value: HealthCheckRating.CriticalRisk, label: 3 },
 ];
 
 
