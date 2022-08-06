@@ -44,8 +44,15 @@ const OccupationalHealthcareEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
           </List>
         }
         <Typography variant="body1">
-          diagnoses by {entry.specialist}
+          diagnosed by {entry.specialist}
         </Typography>
+        {entry.type === 'OccupationalHealthcare' && entry.sickLeave &&
+          <>
+            <Typography variant='body1'>
+              sick leave: {entry.sickLeave.startDate} - {entry.sickLeave.endDate}
+            </Typography>
+          </>
+        }
       </TableCell>
     </TableRow>
   );

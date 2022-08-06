@@ -46,7 +46,7 @@ const HealthCheckEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
         }
         {entry.type === 'HealthCheck' && <HealthCheckRatingIcon healthCheckRating={entry.healthCheckRating}/>}
         <Typography variant="body1">
-          diagnoses by {entry.specialist}
+          diagnosed by {entry.specialist}
         </Typography>
       </TableCell>
     </TableRow>

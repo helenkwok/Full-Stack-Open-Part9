@@ -44,8 +44,15 @@ const HospitalEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
           </List>
         }
         <Typography variant="body1">
-          diagnoses by {entry.specialist}
+          diagnosed by {entry.specialist}
         </Typography>
+        {entry.type === 'Hospital' &&
+        <>
+          <Typography variant="body1">
+            discharged on {entry.discharge.date}: {entry.discharge.criteria}
+          </Typography>
+        </>
+        }
       </TableCell>
     </TableRow>
   );

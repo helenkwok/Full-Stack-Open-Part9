@@ -1,4 +1,4 @@
-import { NewEntry, Type, HealthCheckRating } from "./types";
+import { NewEntry, Type, HealthCheckRating, SickLeave } from "./types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -25,6 +25,12 @@ const isHealthCheckRating = (param: any): param is HealthCheckRating => {
   return Object.values(HealthCheckRating).includes(param);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isSickLeave = (param: any): param is SickLeave => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  return Object.keys(param) === ['startDate', 'endDate'] || param.startDate === "" && param.endDate === "" || param.startDate !== "" && isDate(param.startDate) || param.endDate !== "" && isDate(param.endDate);
+};
+
 const parseParam = (param: unknown, type: string): string => {
   if (!param|| !isString(param)) {
     throw new Error(`Incorrect or missing ${type}`);
@@ -40,10 +46,21 @@ const parseDate = (date: unknown): string => {
   return date;
 };
 
+const parseSickLeave= (sickLeave: unknown): SickLeave | undefined=> {
+  if(!sickLeave) return undefined;
+  if (!isSickLeave(sickLeave)) {
+      throw new Error('Incorrect sickLeave dates: ' + JSON.stringify(sickLeave));
+  }
+  if (sickLeave.startDate === "" && sickLeave.endDate === "") {
+    return undefined;
+  }
+  return sickLeave;
+};
+
 const parseDiagnosisCodes = (diagnosisCodes: unknown): Array<string> | undefined => {
   if(!diagnosisCodes) return undefined;
   if (!isArray(diagnosisCodes) ) {
-    throw new Error('Incorrect or missing date: ' + diagnosisCodes);
+    throw new Error('Incorrect or missing diagnosis code: ' + diagnosisCodes);
 }
   return diagnosisCodes;
 };
@@ -99,7 +116,8 @@ const toNewEntry = (object: any): NewEntry => {
         specialist,
         diagnosisCodes,
         type,
-        employerName: parseParam(object.employerName, 'employerName')
+        employerName: parseParam(object.employerName, 'employerName'),
+        sickLeave: parseSickLeave(object.sickLeave)
       };
       return newEntry;
     case 'HealthCheck':
