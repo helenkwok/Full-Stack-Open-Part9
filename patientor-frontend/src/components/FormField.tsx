@@ -7,7 +7,7 @@ import {
   TextField as TextFieldMUI,
   Typography,
 } from "@material-ui/core";
-import { Diagnosis, Gender } from "../types";
+import { Diagnosis, Gender, HealthCheckRating, Type } from "../types";
 import { InputLabel } from "@material-ui/core";
 import Input from '@material-ui/core/Input';
 
@@ -17,16 +17,42 @@ export type GenderOption = {
   label: string;
 };
 
+export type TypeOption = {
+  value: Type;
+  label: string;
+};
+
+export type HealthCheckRatingOption = {
+  value: HealthCheckRating;
+  label: string;
+};
+
 // props for select field component
-type SelectFieldProps = {
+interface BasicSelectField {
   name: string;
   label: string;
+}
+
+interface GenderSelectField extends BasicSelectField {
   options: GenderOption[];
-};
+}
+
+interface TypeSelectField extends BasicSelectField {
+  options: TypeOption[];
+}
+
+interface HealthCheckRatingSelectField extends BasicSelectField {
+  options: HealthCheckRatingOption[];
+}
+
+type SelectFieldProps =
+  | GenderSelectField
+  | TypeSelectField
+  | HealthCheckRatingSelectField;
 
 const FormikSelect = ({ field, ...props }: FieldProps) => <Select {...field} {...props} />;
 
-export const SelectField = ({ name, label, options }: SelectFieldProps) => (
+export const SelectField = ({ name, label, options }: SelectFieldProps) =>
   <>
     <InputLabel>{label}</InputLabel>
     <Field
@@ -43,7 +69,7 @@ export const SelectField = ({ name, label, options }: SelectFieldProps) => (
       ))}
     </Field>
   </>
-);
+;
 
 interface TextProps extends FieldProps {
   label: string;
@@ -111,7 +137,7 @@ export const DiagnosisSelection = ({
 }) => {
   const [selectedDiagnoses, setDiagnoses] = useState<string[]>([]);
   const field = "diagnosisCodes";
-  const onChange = (data: string[]) => {    
+  const onChange = (data: string[]) => {
     setDiagnoses([...data]);
     setFieldTouched(field, true);
     setFieldValue(field, selectedDiagnoses);

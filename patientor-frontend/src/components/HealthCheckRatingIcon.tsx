@@ -10,14 +10,14 @@ const HealthCheckRatingIcon: React.FC<{ healthCheckRating: HealthCheckRating }> 
     );
    };
 
-  switch (String(healthCheckRating)) {
-    case '0':
+  switch (healthCheckRating) {
+    case 0:
       return <BsHeartFill color='green' />;
-    case '1':
+    case 1:
       return <BsHeartFill color='yellow' />;
-    case '2':
+    case 2:
       return <BsHeartFill color='orange'/>;
-    case '3':
+    case 3:
       return <BsHeartFill color='red' />;
     default:
       return assertNever(healthCheckRating as never);

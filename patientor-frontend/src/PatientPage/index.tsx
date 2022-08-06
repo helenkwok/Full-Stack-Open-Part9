@@ -5,12 +5,43 @@ import { Box, Button, Paper, Table, TableBody, TableContainer, Typography } from
 import { MdMale, MdFemale, MdTransgender } from 'react-icons/md';
 
 import { apiBaseUrl } from "../constants";
-import { Gender, Patient } from '../types';
+import { Entry, Gender, Patient } from '../types';
 import EntryDetails from './EntryDetails';
+import AddEntryModal from '../AddEntryModal';
+import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
 
 const PatientPage = () => {
   const [patient, setPatient] = React.useState<Patient | null>(null);
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string>();
+
   const { id } = useParams<{ id: string }>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
+
+  const submitNewEntry = async (values: EntryFormValues) => {
+    try {
+      const { data: newEntry } = await axios.post<Entry>(
+        `${apiBaseUrl}/patients/${id as string}/entries`,
+        values
+      );
+      patient?.entries.push(newEntry);
+      closeModal();
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        console.error(e?.response?.data || "Unrecognized axios error");
+        setError(String(e?.response?.data?.error) || "Unrecognized axios error");
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
 
   React.useEffect(() => {
     const fetchPatientList = async () => {
@@ -66,8 +97,14 @@ const PatientPage = () => {
           </TableContainer>
         </Box>
       }
+      <AddEntryModal
+        modalOpen={modalOpen}
+        onSubmit={submitNewEntry}
+        error={error}
+        onClose={closeModal}
+      />
       <Box sx={{ pt: 2 }}>
-        <Button variant="contained" onClick={() => console.log('add entry')}>
+        <Button variant="contained" onClick={() => openModal()}>
           ADD NEW ENTRY
         </Button>
       </Box>

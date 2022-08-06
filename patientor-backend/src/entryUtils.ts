@@ -43,10 +43,10 @@ const parseType = (type: unknown): Type => {
 };
 
 const parseHealthCheckRating = (healthCheckRating: unknown): HealthCheckRating => {
-  if (!healthCheckRating || !isHealthCheckRating(healthCheckRating)) {
+  if (!healthCheckRating || !isHealthCheckRating(Number(healthCheckRating))) {
     throw new Error('Incorrect or missing health check rating: ' + healthCheckRating);
   }
-  return healthCheckRating;
+  return Number(healthCheckRating);
 };
 
 const assertNever = (object: never): never => {
